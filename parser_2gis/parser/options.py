@@ -25,7 +25,9 @@ class ParserOptions(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
 
     skip_404_response: bool = True
-    delay_between_clicks: NonNegativeInt = 0
+    # A conservative default keeps requests human-paced and avoids needless
+    # load. Advanced CLI users can still explicitly choose another value.
+    delay_between_clicks: NonNegativeInt = 750
     max_records: PositiveInt = default_max_records()
     use_gc: bool = False
     gc_pages_interval: PositiveInt = 10

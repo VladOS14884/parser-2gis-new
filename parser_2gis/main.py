@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 from typing import Any
 
 import pydantic
@@ -170,4 +171,5 @@ def main() -> None:
         return
 
     from .web import run_server
-    run_server(port=getattr(args, 'web_port', 8666))
+    open_browser = os.getenv('PARSER2GIS_NO_BROWSER') != '1'
+    run_server(port=getattr(args, 'web_port', 8666), open_browser=open_browser)
