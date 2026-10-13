@@ -52,7 +52,8 @@ ad-hoc-подпись, но не нотарифицирована Apple. Поэ�
 Проверка архива:
 
 ```bash
-shasum -a 256 -c dist/Parser2GIS-macOS-x86_64.zip.sha256
+cd dist
+shasum -a 256 -c Parser2GIS-macOS-x86_64.zip.sha256
 ```
 
 Соответствующий исходный код для выполнения требований LGPL находится в

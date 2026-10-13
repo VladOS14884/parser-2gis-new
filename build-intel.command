@@ -44,8 +44,11 @@ if [[ -d "$APP_PATH" ]]; then
       Parser2GIS.app LICENSE NOTICE SOURCE_CODE_RU.md INTEL_MAC_RU.md \
       FUNCTION_MATRIX_RU.md TEST_REPORT_RU.md
   )
-  /usr/bin/shasum -a 256 "$PROJECT_DIR/dist/Parser2GIS-macOS-x86_64.zip" \
-    > "$PROJECT_DIR/dist/Parser2GIS-macOS-x86_64.zip.sha256"
+  (
+    cd "$PROJECT_DIR/dist"
+    /usr/bin/shasum -a 256 Parser2GIS-macOS-x86_64.zip \
+      > Parser2GIS-macOS-x86_64.zip.sha256
+  )
   rm -rf "$STAGE_DIR"
   trap - EXIT
 fi
@@ -62,8 +65,11 @@ mkdir -p "$SOURCE_STAGE/Parser2GIS-source"
   /usr/bin/zip -qry -y "$PROJECT_DIR/dist/Parser2GIS-source-intel.zip" \
     Parser2GIS-source
 )
-/usr/bin/shasum -a 256 "$PROJECT_DIR/dist/Parser2GIS-source-intel.zip" \
-  > "$PROJECT_DIR/dist/Parser2GIS-source-intel.zip.sha256"
+(
+  cd "$PROJECT_DIR/dist"
+  /usr/bin/shasum -a 256 Parser2GIS-source-intel.zip \
+    > Parser2GIS-source-intel.zip.sha256
+)
 rm -rf "$SOURCE_STAGE"
 trap - EXIT
 
