@@ -75,7 +75,7 @@ echo "Установка зависимостей в .venv..."
 "$PROJECT_DIR/.venv/bin/python" -m pip install --upgrade pip setuptools wheel
 "$PROJECT_DIR/.venv/bin/python" -m pip install -e '.[dev]'
 
-"$PROJECT_DIR/.venv/bin/python" -c "import flask, pydantic, pychrome, psutil, requests, xlsxwriter; print('Зависимости импортируются успешно.')"
+"$PROJECT_DIR/.venv/bin/python" -c "import flask, pydantic, pychrome, psutil, requests, xlsxwriter, parser_2gis; print('Зависимости и Parser2GIS импортируются успешно.')"
 
 echo
 echo "Готово: $($PROJECT_DIR/.venv/bin/python --version 2>&1), архитектура x86_64."
