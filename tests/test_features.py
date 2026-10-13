@@ -59,6 +59,13 @@ def test_web_rejects_non_2gis_urls_without_starting_a_job():
     assert response.get_json()['ok'] is False
     assert '2gis' in response.get_json()['error']
 
+    response = client.post('/api/start', json={
+        'urls': ['https://2gis.ru/moscow'],
+    })
+    assert response.status_code == 400
+    assert response.get_json()['ok'] is False
+    assert 'Страницы города' in response.get_json()['error']
+
 
 def test_url_limits_and_safe_delay_defaults():
     assert _validated_urls([
@@ -70,6 +77,17 @@ def test_url_limits_and_safe_delay_defaults():
         _validated_urls(['file:///etc/passwd'])
     with pytest.raises(ValueError):
         _validated_urls(['https://2gis.evil.example/search/test'])
+
+    with pytest.raises(ValueError, match='Страницы города'):
+        _validated_urls(['https://2gis.ru/moscow'])
+
+    assert _validated_urls([
+        'https://2gis.ru/moscow/firm/123',
+        'https://2gis.ru/moscow/inside/456',
+    ]) == [
+        'https://2gis.ru/moscow/firm/123',
+        'https://2gis.ru/moscow/inside/456',
+    ]
 
     config = _build_config({
         'max_records': 999999,

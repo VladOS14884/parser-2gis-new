@@ -2,6 +2,21 @@ import re
 
 from .parsers import FirmParser, InBuildingParser, MainParser
 
+PARSER_TYPES = (FirmParser, InBuildingParser, MainParser)
+
+
+def get_parser_type(url):
+    """Return the parser class matching ``url``, or ``None`` when unsupported."""
+    for parser in PARSER_TYPES:
+        if re.match(parser.url_pattern(), url):
+            return parser
+    return None
+
+
+def is_supported_url(url) -> bool:
+    """Whether ``url`` has a route implemented by the source project."""
+    return get_parser_type(url) is not None
+
 
 def get_parser(url, chrome_options, parser_options):
     """Parser factory function.
@@ -14,9 +29,11 @@ def get_parser(url, chrome_options, parser_options):
     Returns:
         Parser instance.
     """
-    for parser in (FirmParser, InBuildingParser, MainParser):
-        if re.match(parser.url_pattern(), url):
-            return parser(url, chrome_options, parser_options)
-
-    # Default fallback
-    return MainParser(url, chrome_options, parser_options)
+    parser = get_parser_type(url)
+    if parser is None:
+        raise ValueError(
+            'Неподдерживаемая ссылка 2GIS. Используйте ссылку поиска '
+            '(/search/...), карточки организации (/firm/...) или списка '
+            'организаций в здании (/inside/...).'
+        )
+    return parser(url, chrome_options, parser_options)

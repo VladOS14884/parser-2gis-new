@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 from ..config import Configuration
 from ..logger import logger
+from ..parser import is_supported_url
 from ..paths import data_path
 from ..writer import WriterOptions, get_writer
 from ..writer.writers import write_multisheet_xlsx
@@ -120,6 +121,13 @@ def _validated_urls(values: Any) -> list[str]:
         host = (parsed.hostname or '').lower()
         if parsed.scheme not in ('http', 'https') or host not in allowed_hosts:
             raise ValueError('Допустимы только ссылки вида https://2gis.<домен>/...')
+        if not is_supported_url(url):
+            raise ValueError(
+                'Неподдерживаемая ссылка 2GIS. Укажите ссылку поиска '
+                '(/search/...), карточки организации (/firm/...) или списка '
+                'организаций в здании (/inside/...). Страницы города без '
+                'рубрики или поискового запроса собирать нельзя.'
+            )
         seen.add(url)
         urls.append(url)
     if not urls:
