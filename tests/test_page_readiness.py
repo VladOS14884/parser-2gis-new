@@ -1,6 +1,9 @@
 import pytest
 
+from parser_2gis.config import Configuration
+from parser_2gis.parser.exceptions import ParserAccessBlocked
 from parser_2gis.parser.parsers.main import MainParser
+from parser_2gis.web.job import ParseJob
 
 
 class _FakeRemote:
@@ -49,7 +52,7 @@ def test_captcha_is_reported_explicitly_without_bypass():
         'Мы заметили подозрительную активность. Подтвердите, что вы не робот.',
     )
 
-    with pytest.raises(RuntimeError, match='не обходит CAPTCHA'):
+    with pytest.raises(ParserAccessBlocked, match='не обходит CAPTCHA'):
         parser._raise_if_access_blocked()
 
 
@@ -58,3 +61,37 @@ def test_normal_page_is_not_reported_as_captcha():
     parser._chrome_remote = _PageRemote('Аптеки в Москве', 'Результаты поиска')
 
     parser._raise_if_access_blocked()
+
+
+def test_captcha_stops_remaining_job_urls(monkeypatch):
+    attempted = []
+
+    class _BlockedParser:
+        def __init__(self, url):
+            self.url = url
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc_info):
+            return None
+
+        def parse(self, writer):
+            attempted.append(self.url)
+            raise ParserAccessBlocked('2GIS CAPTCHA: сбор остановлен')
+
+        def close(self):
+            return None
+
+    monkeypatch.setattr(
+        'parser_2gis.web.job.get_parser',
+        lambda url, **kwargs: _BlockedParser(url),
+    )
+
+    job = ParseJob()
+    job.start(Configuration(), ['first', 'second', 'third'])
+    job._thread.join(timeout=2)
+
+    assert attempted == ['first']
+    assert job.status == 'error'
+    assert job.error == '2GIS CAPTCHA: сбор остановлен'

@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Optional
 from ...chrome import ChromeRemote
 from ...common import wait_until_finished
 from ...logger import logger
+from ..exceptions import ParserAccessBlocked
 from ..utils import blocked_requests
 
 if TYPE_CHECKING:
@@ -111,7 +112,7 @@ class MainParser:
             'confirm that you are not a robot',
         )
         if any(marker in page_text for marker in captcha_markers):
-            raise RuntimeError(
+            raise ParserAccessBlocked(
                 '2GIS показал CAPTCHA или ограничил доступ для текущего IP. '
                 'Сбор остановлен: Parser2GIS не обходит CAPTCHA. '
                 'Повторите позже или обратитесь в поддержку 2GIS.'

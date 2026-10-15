@@ -7,6 +7,7 @@ from typing import Any, Optional
 from ..config import Configuration
 from ..logger import logger
 from ..parser import get_parser
+from ..parser.exceptions import ParserAccessBlocked
 from ..writer import FilterWriter, get_writer
 from ..writer.filters import any_filter_enabled
 from ..writer.record import extract_record
@@ -133,6 +134,7 @@ class ParseJob:
 
             logger.info('Парсинг запущен.')
             failed = 0
+            blocked_error: Optional[str] = None
             with writer:
                 for url in urls:
                     if self._cancelled:
@@ -146,6 +148,14 @@ class ParseJob:
                         with self._parser:
                             if not self._cancelled:
                                 self._parser.parse(writer)
+                    except ParserAccessBlocked as e:
+                        # CAPTCHA/access restrictions apply to the current IP,
+                        # so trying every remaining URL would only add load and
+                        # repeat the same failure.
+                        failed += 1
+                        blocked_error = str(e)
+                        logger.error('Сбор остановлен из-за ограничения 2GIS: %s', e)
+                        break
                     except Exception as e:
                         # A single URL failing (e.g. 2GIS anti-bot timeout) must not
                         # abort the whole run — log it, keep what it collected, and
@@ -158,6 +168,9 @@ class ParseJob:
 
             if self._cancelled:
                 self.status = 'stopped'
+            elif blocked_error:
+                self.status = 'partial' if self.count else 'error'
+                self.error = blocked_error
             elif failed == len(urls) and not self.count:
                 self.status = 'error'
                 self.error = f'Не удалось обработать ни одну из {len(urls)} ссылок.'
