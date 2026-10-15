@@ -204,6 +204,10 @@
   #histMerge:hover{background:#e3e8fe}
   .hsel{display:flex;align-items:center;gap:6px;cursor:pointer}
   .hsel input{accent-color:var(--primary);flex:none}
+  .file-warning{display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;padding:24px;background:#f5f6fa;color:#171922}
+  .file-warning-card{max-width:620px;padding:28px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 16px 50px #1f29371f;line-height:1.55}
+  .file-warning-card h2{margin:0 0 10px}.file-warning-card p{margin:8px 0}.file-warning-card code{word-break:break-all}
+  .file-warning-card a{color:var(--primary);font-weight:700}
   @media (max-width:1024px){
     .app{grid-template-columns:1fr}
     /* Drop the scroll container around the sidebar so native <select> pickers
@@ -220,6 +224,14 @@
 </style>
 </head>
 <body>
+<div class="file-warning" id="fileWarning" role="alert">
+  <div class="file-warning-card">
+    <h2>Parser2GIS открыт как файл</h2>
+    <p>Веб-интерфейсу нужен локальный сервер. Закройте эту вкладку и дважды щёлкните <code>start.command</code> в папке Parser2GIS.</p>
+    <p>Пока окно Терминала остаётся открытым, используйте адрес:</p>
+    <p><a href="http://127.0.0.1:8666/">http://127.0.0.1:8666/</a></p>
+  </div>
+</div>
 <div class="app">
   <aside>
     <div class="brand"><div class="logo">2G</div><h1>Parser 2GIS</h1>
@@ -398,6 +410,10 @@
 <script>
 (function(){
   var $=function(id){return document.getElementById(id)};
+  if(window.location.protocol==='file:'){
+    $('fileWarning').style.display='flex';
+    return;
+  }
   var poll=null, cursor=0, records=[], histId=null;
 
   // ---- i18n (Русский по умолчанию, Қазақша доступен переключателем) ----

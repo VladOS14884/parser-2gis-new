@@ -41,6 +41,8 @@ def test_web_resources_and_generator_are_available():
     assert index.status_code == 200
     assert b'<html lang="ru">' in index.data
     assert 'Ручная связь через WhatsApp'.encode() in index.data
+    assert 'Parser2GIS открыт как файл'.encode() in index.data
+    assert b"window.location.protocol==='file:'" in index.data
 
     generator = client.get('/api/generator')
     assert generator.status_code == 200
