@@ -11,3 +11,4 @@ build/
 *.spec
 .tox/
 .mypy_cache/
+.DS_Store

@@ -99,6 +99,14 @@ def test_url_limits_and_safe_delay_defaults():
     assert config.parser.delay_between_clicks == 500
 
 
+def test_api_key_is_kept_in_memory_but_not_serialized():
+    config = _build_config({'api_key': 'test-secret-key'})
+
+    assert config.parser.api_key == 'test-secret-key'
+    assert 'api_key' not in config.parser.model_dump()
+    assert 'test-secret-key' not in config.model_dump_json()
+
+
 def test_filters_and_all_export_formats(tmp_path):
     phone = {'type': 'phone', 'value': '+7 999 000-00-01', 'text': '+7 999 000-00-01'}
     whatsapp = {

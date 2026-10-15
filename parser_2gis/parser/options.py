@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict, NonNegativeInt, PositiveInt
+import os
+
+from pydantic import BaseModel, ConfigDict, Field, NonNegativeInt, PositiveInt
 
 from ..chrome.options import default_memory_limit
 from ..common import floor_to_hundreds
@@ -21,6 +23,9 @@ class ParserOptions(BaseModel):
         max_records: Max number of records to parse from one URL.
         use_gc: Use Garbage Collector.
         gc_pages_interval: Run Garbage Collector every N pages (if `use_gc` enabled).
+        api_key: Optional official 2GIS Places API key. It is deliberately
+            excluded from serialization so it is never written to config or
+            history files.
     """
     model_config = ConfigDict(validate_assignment=True)
 
@@ -31,3 +36,8 @@ class ParserOptions(BaseModel):
     max_records: PositiveInt = default_max_records()
     use_gc: bool = False
     gc_pages_interval: PositiveInt = 10
+    api_key: str = Field(
+        default_factory=lambda: os.getenv('PARSER2GIS_API_KEY', ''),
+        exclude=True,
+        repr=False,
+    )

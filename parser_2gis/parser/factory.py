@@ -1,6 +1,7 @@
 import re
 
 from .parsers import FirmParser, InBuildingParser, MainParser
+from .parsers.official_api import OfficialApiParser
 
 PARSER_TYPES = (FirmParser, InBuildingParser, MainParser)
 
@@ -36,4 +37,6 @@ def get_parser(url, chrome_options, parser_options):
             '(/search/...), карточки организации (/firm/...) или списка '
             'организаций в здании (/inside/...).'
         )
+    if parser_options.api_key:
+        return OfficialApiParser(url, parser_options)
     return parser(url, chrome_options, parser_options)

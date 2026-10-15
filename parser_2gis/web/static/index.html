@@ -325,6 +325,10 @@
     <details class="sect" id="params">
       <summary data-i18n="params_title">📋 Параметрлер</summary>
       <div class="sectbody">
+        <label class="field"><span data-i18n="api_key">Ключ официального Places API 2GIS</span>
+          <input type="password" id="apiKey" data-i18n-ph="api_key_ph" placeholder="Вставьте ключ — он не сохраняется" autocomplete="off" spellcheck="false">
+        </label>
+        <div class="hint" data-i18n="api_key_hint">С ключом используется официальный API вместо Chrome. Контакты вернутся только при наличии соответствующего разрешения у ключа.</div>
         <label class="field"><span data-i18n="maxrec">Бір URL-ден макс. жазба</span><input type="number" id="maxrec" min="1" step="1" value="50"></label>
         <label class="check"><input type="checkbox" id="clean" checked> <span data-i18n="clean">Таза көрініс (қоқыссыз)</span></label>
         <label class="check"><input type="checkbox" id="headless" checked> <span data-i18n="headless">Жасырын браузер (headless)</span></label>
@@ -430,7 +434,9 @@
       filters_title:'🧹 Сүзгілер', f_dedup_niches:'Ниша аралық қайталанусыз (1 мекеме — 1 рет)', f_dedup:'Франшизасыз (ұйымға 1)', f_phone:'Тек телефоны барлар',
       f_wa:'Тек WhatsApp барлар', f_social:'Тек әлеуметтік желілермен', f_email:'Тек e-mail барлар',
       f_site:'Тек сайты барлар', rating_from:'Рейтинг (бастап)', reviews_from:'Пікірлер (бастап)',
-      params_title:'📋 Параметрлер', maxrec:'Бір URL-ден макс. жазба', clean:'Таза көрініс (қоқыссыз)',
+      params_title:'📋 Параметрлер', api_key:'2GIS Places API ресми кілті', api_key_ph:'Кілтті енгізіңіз — ол сақталмайды',
+      api_key_hint:'Кілт болғанда Chrome орнына ресми API қолданылады. Контактілер кілтте тиісті рұқсат болса ғана қайтарылады.',
+      maxrec:'Бір URL-ден макс. жазба', clean:'Таза көрініс (қоқыссыз)',
       headless:'Жасырын браузер (headless)', adv_title:'⚙️ Қосымша баптаулар', a_images:'Суреттерді өшіру (жылдамырақ)',
       a_max:'Браузерді жайып ашу', a_skip404:'Дәл сәйкестіктер («табылмады» өткізу)', a_rubrics:'«Айдарлар» бағаны',
       a_comments:'Ұяшықтардағы түсініктемелер (жұмыс уақыты т.б.)', a_rmempty:'Бос бағандарды жою',
@@ -465,6 +471,8 @@
       filters_title:'🧹 Фильтры', f_dedup_niches:'Без повторов между нишами (1 заведение — 1 раз)', f_dedup:'Без франшиз (1 на организацию)', f_phone:'Только с телефоном',
       f_wa:'Только с WhatsApp', f_social:'Только с соцсетями', f_email:'Только с e-mail', f_site:'Только с сайтом',
       rating_from:'Рейтинг от', reviews_from:'Отзывов от', params_title:'📋 Параметры',
+      api_key:'Ключ официального Places API 2GIS', api_key_ph:'Вставьте ключ — он не сохраняется',
+      api_key_hint:'С ключом используется официальный API вместо Chrome. Контакты вернутся только при наличии соответствующего разрешения у ключа.',
       maxrec:'Макс. записей с одного URL', clean:'Чистый вид (без мусора)', headless:'Скрытый браузер (headless)',
       adv_title:'⚙️ Расширенные настройки', a_images:'Отключить изображения (быстрее)', a_max:'Запускать браузер развёрнутым',
       a_skip404:'Точные совпадения (пропуск «не найдено»)', a_rubrics:'Колонка «Рубрики»',
@@ -520,6 +528,7 @@
     return {
       urls: $('urls').value.split('\n'),
       directions: directions,
+      api_key: $('apiKey').value.trim(),
       max_records: parseInt($('maxrec').value||'50',10),
       headless: $('headless').checked,
       clean: $('clean').checked,

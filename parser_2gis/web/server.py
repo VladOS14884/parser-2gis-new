@@ -141,6 +141,11 @@ def _build_config(data: dict[str, Any]) -> Configuration:
     """Build a Configuration from the web request payload."""
     config = Configuration()
     config.chrome.headless = bool(data.get('headless', True))
+    # The key exists only in this in-memory job configuration. ParserOptions
+    # excludes it from model serialization, config files, and history.
+    config.parser.api_key = str(
+        data.get('api_key') or config.parser.api_key or ''
+    ).strip()
     config.parser.max_records = min(
         _MAX_RECORDS_PER_URL, max(1, int(data.get('max_records', 100))))
     config.writer.csv.clean = bool(data.get('clean', True))
